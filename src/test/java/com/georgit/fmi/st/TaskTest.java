@@ -27,6 +27,18 @@ public class TaskTest {
 	 * 
 	 */
 	@Test
+	public void testChangeStatusAfterCompleted() {
+		task.setAssignee("User");
+		final String result = task.updateStatus(Task.COMPLETED_STATUS, "Start");
+		assertTrue(result.equals(Task.COMPLETED_STATUS));
+		task.updateStatus(Task.WIP_STATUS, "Start");
+		assertTrue(result.equals(Task.COMPLETED_STATUS));
+	}
+	
+	/**
+	 * 
+	 */
+	@Test
 	public void testChangeStatusWithNULLStatus() {
 		task.setAssignee("User");
 		final String result = task.updateStatus(null, "Start");
