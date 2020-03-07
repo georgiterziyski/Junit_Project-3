@@ -3,6 +3,9 @@
  */
 package com.georgit.fmi.st;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * @author GeorgiT
  *
@@ -16,16 +19,68 @@ public class Task {
 	static final String NOT_ASSIGNED = "Липсва отговорник";
 	static final String INVALID_STATUS = "Невалиден статус";
 	static final String INVALID_COMMENT = "Невалиден коментар";
+	static final String SUBTASK_FAIL = "Несъществуваща Подзадача";
+	static final String SUBTASK_PASS = "Съществуваща Подзадача";
+	static final String SUBTASK_NULL = "NULL Подзадача";
+	static final String PARENT_PASS = "Съществува";
+	static final String PARENT_NULL = "Не Съществува";
 	
 	
 	private String title;
 	private String assignee;
 	private String status = NEW_STATUS;
+	private Set<Task> subTasks = new HashSet<Task>();
+	private Task parent;
 
+	
 	public Task() {
 		//Empty constructor for testing.
 	}
 	
+	
+	public Task getParent() {
+		return parent;
+	}
+
+	public void setParent(Task parent) {
+		this.parent = parent;
+	}
+
+	public Set<Task> getSubTasks() {
+		return subTasks;
+	}
+
+	public void setSubTasks(Set<Task> subTasks) {
+		this.subTasks = subTasks;
+	}
+	
+	public void addSubTask(Task task) {
+		this.getSubTasks().add(task);
+	}
+	/**
+	 * @param title
+	 * @return TRUE if the subtask is found and FALSE if not.
+	 */
+	public String updateSubTask(final String title) {
+		 if(null == title) {
+			 return SUBTASK_NULL;
+		 }
+	     for (Task task : subTasks) {
+	         if(task.getTitle().equals(title)) {
+	        	 return SUBTASK_PASS;
+	         }
+	      }
+	     return SUBTASK_FAIL;
+	}
+	
+	/**
+	 * @param status
+	 * @param comment
+	 * @return updated status if the update is valid.
+	 * @return NOT_ASSIGNED if there is no assignee set
+	 * @return INVALID_STATUS if the status is not valid
+	 * @return INVALID_COMMENT if the comment is not valid
+	 */
 	public String updateStatus(final String status, final String comment) {
 		if(isCommentValid(comment)) {
 			if(isStatusValid(status)) {
@@ -76,7 +131,11 @@ public class Task {
 	public String getStatus() {
 		return status;
 	}
-	
+	/**
+	 * @param status
+	 * @return updated status if the update is valid or
+	 * does not update the status once it is COMPLETED.
+	 */
 	public void setStatus(final String status) {
 		if(!getStatus().equals(COMPLETED_STATUS)) {
 			if(status.equals(WIP_STATUS)) {
